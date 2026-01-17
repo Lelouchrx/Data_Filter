@@ -1,0 +1,79 @@
+INFO:root:Cleaning output directory: frames_output
+INFO:root:fix_size: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000018.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 289
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0873
+INFO:root:Video: episode_000018 | Blur: 165.1 | Jitter: 0.087 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000025.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 270
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0702
+INFO:root:Video: episode_000025 | Blur: 184.9 | Jitter: 0.070 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000012_exposure.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 299
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0849
+INFO:root:Video: episode_000012_exposure | Blur: 106.7 | Jitter: 0.085 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000024.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 255
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0671
+INFO:root:Video: episode_000024 | Blur: 197.8 | Jitter: 0.067 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000021.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 298
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0767
+INFO:root:Video: episode_000021 | Blur: 186.8 | Jitter: 0.077 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000026.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 264
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0678
+INFO:root:Video: episode_000026 | Blur: 177.2 | Jitter: 0.068 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000022.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 299
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0545
+INFO:root:Video: episode_000022 | Blur: 231.9 | Jitter: 0.055 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000018_shake.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 289
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.1697
+INFO:root:Video: episode_000018_shake | Blur: 144.1 | Jitter: 0.170 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000019.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 282
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0951
+INFO:root:Video: episode_000019 | Blur: 196.6 | Jitter: 0.095 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000027.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 268
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0651
+INFO:root:Video: episode_000027 | Blur: 168.3 | Jitter: 0.065 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000014_blur.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 298
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0768
+INFO:root:Video: episode_000014_blur | Blur: 3.6 | Jitter: 0.077 | Valid: 0.000 | Keep: False
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000030_shake.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 274
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.1924
+INFO:root:Video: episode_000030_shake | Blur: 161.4 | Jitter: 0.192 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000030.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 274
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0767
+INFO:root:Video: episode_000030 | Blur: 174.3 | Jitter: 0.077 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000013.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 277
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0955
+INFO:root:Video: episode_000013 | Blur: 189.6 | Jitter: 0.096 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000009.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 299
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0756
+INFO:root:Video: episode_000009 | Blur: 219.7 | Jitter: 0.076 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000005.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 299
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0870
+INFO:root:Video: episode_000005 | Blur: 206.9 | Jitter: 0.087 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000003.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 295
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0640
+INFO:root:Video: episode_000003 | Blur: 241.6 | Jitter: 0.064 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000006_shake.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 299
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.2114
+INFO:root:Video: episode_000006_shake | Blur: 177.3 | Jitter: 0.211 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000020.mp4
+DEBUG:root:视频处理 - 开始计算高级抖动检测，总帧数: 284
+DEBUG:root:视频处理 - 高级抖动检测完成，最终分数: 0.0742
+INFO:root:Video: episode_000020 | Blur: 188.2 | Jitter: 0.074 | Valid: 1.000 | Keep: True
+INFO:root:processing video /home/cwr/FAST-VQA-and-FasterVQA/original_data/RealSource-World/episode_000021_exposure.mp4
