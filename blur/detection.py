@@ -20,12 +20,12 @@ def estimate_motion(prev_frame, curr_frame, method='farneback', resize_to=(320, 
     curr_gray = cv2.cvtColor(curr_frame, cv2.COLOR_BGR2GRAY)
 
     if method == 'farneback':
-        # Dense optical flow (slower but accurate)
+        # Dense optical flow
         flow = cv2.calcOpticalFlowFarneback(prev_gray, curr_gray, None, 0.5, 3, 15, 3, 5, 1.2, 0)
         dx = np.mean(flow[..., 0])
         dy = np.mean(flow[..., 1])
     elif method == 'lk':
-        # Sparse optical flow (faster, ~5-10x speedup)
+        # Sparse optical flow
         p0 = cv2.goodFeaturesToTrack(
             prev_gray,
             maxCorners=20,  # Reduced to 20 for maximum speed
