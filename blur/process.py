@@ -19,6 +19,7 @@ from config import (
     IMG_EXTENSIONS, VIDEO_EXTENSIONS, VERBOSE, DISPLAY
 )
 
+### 导入results = process_media('data/blur.mp4')
 
 def parse_args():
     parser = argparse.ArgumentParser(description='run blur detection on images and videos')
@@ -30,6 +31,7 @@ def parse_args():
 
     parser.add_argument('-v', '--verbose', action='store_true', help='set logging level to debug')
     parser.add_argument('-d', '--display', action='store_true', help='display images')
+    parser.add_argument('-r', '--record', action='store_true', help='save frame images and output JSON log')
     parser.add_argument('--video-blur-ratio', type=float, default=0.3, help='ratio of blurry frames to mark video as unusable')
     parser.add_argument('--sample-rate', type=float, default=10.0, help='sample rate per second (frames per second)')
     parser.add_argument('--motion-method', type=str, default='lk', choices=['farneback', 'lk'], help='motion estimation method (lk is faster)')
@@ -63,20 +65,21 @@ def find_media(media_paths, img_extensions=None, video_extensions=None):
 
 
 def process_video(video_path, threshold=None, fix_size=None, blur_ratio_threshold=None, output_dir=None, sample_rate=None,
-                 motion_method=None, motion_skip_frames=None, jitter_threshold=None, valid_ratio_threshold=None):
+                 motion_method=None, motion_skip_frames=None, jitter_threshold=None, valid_ratio_threshold=None, record=False):
     """Process video with optimized motion detection.
 
     Args:
         video_path: 视频文件路径
-        threshold: 模糊阈值（默认从config读取）
-        fix_size: 是否固定尺寸（默认从config读取）
-        blur_ratio_threshold: 视频模糊帧比例阈值（默认从config读取）
-        output_dir: 输出目录（默认从config读取）
-        sample_rate: 采样率（默认从config读取）
-        motion_method: 运动估计方法 'farneback' 或 'lk'（默认从config读取）
-        motion_skip_frames: 运动估计跳帧数（默认从config读取）
-        jitter_threshold: 抖动阈值（默认从config读取）
-        valid_ratio_threshold: 有效率阈值（默认从config读取）
+        threshold: 模糊阈值
+        fix_size: 是否固定尺寸
+        blur_ratio_threshold: 视频模糊帧比例阈值
+        output_dir: 输出目录
+        sample_rate: 采样率
+        motion_method: 运动估计方法 'farneback' 或 'lk'
+        motion_skip_frames: 运动估计跳帧数
+        jitter_threshold: 抖动阈值
+        valid_ratio_threshold: 有效率阈值
+        record: 是否保存frame输出和JSON日志
     """
 
     threshold = threshold if threshold is not None else THRESHOLD
@@ -109,8 +112,8 @@ def process_video(video_path, threshold=None, fix_size=None, blur_ratio_threshol
         cap.release()
         return None, True
 
-    if output_dir:
-        video_name = video_path.stem
+    video_name = video_path.stem
+    if record and output_dir:
         frames_dir = pathlib.Path(output_dir) / video_name
         frames_dir.mkdir(parents=True, exist_ok=True)
     else:
@@ -126,7 +129,9 @@ def process_video(video_path, threshold=None, fix_size=None, blur_ratio_threshol
     valid_frames = []
     dx_seq, dy_seq = [], []
     prev_frame = None
-    motion_counter = 0  # 单独的运动估计计数器
+    motion_counter = 0
+    p0 = None  # 特征点状态
+    frame_idx = 0  # 帧索引
 
     for i in range(0, frame_count, frame_interval):
         cap.set(cv2.CAP_PROP_POS_FRAMES, i)
@@ -144,13 +149,16 @@ def process_video(video_path, threshold=None, fix_size=None, blur_ratio_threshol
 
         # Optimized motion estimation with frame skipping
         if prev_frame is not None:
-            # 每次循环都计算运动，但使用单独的计数器来控制跳帧
             if motion_counter % motion_skip_frames == 0:
-                dx, dy = estimate_motion(prev_frame, original_frame, method=motion_method)
+                if motion_method == 'lk':
+                    dx, dy, p0 = estimate_motion(prev_frame, original_frame, method=motion_method, 
+                                                  p0=p0, frame_idx=frame_idx, reinit_interval=10)
+                    frame_idx += 1 
+                else:
+                    dx, dy, _ = estimate_motion(prev_frame, original_frame, method=motion_method)
                 dx_seq.append(dx)
                 dy_seq.append(dy)
             else:
-                # 对于跳过的帧，使用上一次的运动值（或0）
                 if len(dx_seq) > 0:
                     dx_seq.append(dx_seq[-1])
                     dy_seq.append(dy_seq[-1])
@@ -161,14 +169,11 @@ def process_video(video_path, threshold=None, fix_size=None, blur_ratio_threshol
 
         prev_frame = original_frame
 
-        # Add text overlay with blur score
-        display_frame = original_frame.copy()
-        status = "BLUR" if blurry else "CLEAR"
-        text = f"{status} {score:.1f}"
-        cv2.putText(display_frame, text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0) if not blurry else (0, 0, 255), 2)
-
-        # Save frame with simple naming
-        if frames_dir:
+        if record and frames_dir:
+            display_frame = original_frame.copy()
+            status = "BLUR" if blurry else "CLEAR"
+            text = f"{status} {score:.1f}"
+            cv2.putText(display_frame, text, (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0) if not blurry else (0, 0, 255), 2)
             frame_filename = f"{i:04d}_{status}_{score:.1f}.jpg"
             frame_path = frames_dir / frame_filename
             cv2.imwrite(str(frame_path), display_frame)
@@ -200,7 +205,7 @@ def process_video(video_path, threshold=None, fix_size=None, blur_ratio_threshol
             else:
                 logging.debug(f"抖动检测: dx_seq长度={len(dx_seq)}, dy_seq长度={len(dy_seq)}, 抖动值={jitter_video:.3f}")
     
-    # Decision rules - adjusted for better accuracy
+    # Decision rules
     keep = True
     rejection_reasons = []
     
@@ -216,10 +221,8 @@ def process_video(video_path, threshold=None, fix_size=None, blur_ratio_threshol
         keep = False
         rejection_reasons.append(f"有效率过低({valid_ratio:.3f} < {valid_ratio_threshold})")
     
-    # 获取视频名称（在使用之前定义）
     video_name = video_path.stem
     
-    # 记录拒绝原因
     if rejection_reasons:
         logging.info(f"视频 {video_name} 被拒绝，原因: {', '.join(rejection_reasons)}")
 
@@ -227,17 +230,17 @@ def process_video(video_path, threshold=None, fix_size=None, blur_ratio_threshol
     processing_time = end_time - start_time
     logging.info(f"Video: {video_name} | Resolution: {video_width}x{video_height} | Blur: {blur_video:.1f} | Jitter: {jitter_video:.3f} | Valid: {valid_ratio:.3f} | Keep: {keep} | Time: {processing_time:.2f}s")
 
-    # 输出JSON格式的结果到stdout，方便批量脚本解析
-    result_json = {
-        'video_name': video_name,
-        'blur_video': float(blur_video),
-        'jitter_video': float(jitter_video),
-        'valid_ratio': float(valid_ratio),
-        'keep': bool(keep),
-        'total_samples': int(len(blur_scores)),
-        'processing_time': float(processing_time)
-    }
-    print(f"RESULT_JSON:{json.dumps(result_json)}", flush=True)
+    if record:
+        result_json = {
+            'video_name': video_name,
+            'blur_video': float(blur_video),
+            'jitter_video': float(jitter_video),
+            'valid_ratio': float(valid_ratio),
+            'keep': bool(keep),
+            'total_samples': int(len(blur_scores)),
+            'processing_time': float(processing_time)
+        }
+        print(f"RESULT_JSON:{json.dumps(result_json)}", flush=True)
 
     return {
         'blur_video': blur_video,
@@ -249,18 +252,16 @@ def process_video(video_path, threshold=None, fix_size=None, blur_ratio_threshol
     }, not keep
 
 
-def process_image(image_path, threshold=None, fix_size=None, output_dir=None, display=None):
+def process_image(image_path, threshold=None, fix_size=None, output_dir=None, display=None, record=False):
     """处理单张图片
     
     Args:
         image_path: 图片文件路径
-        threshold: 模糊阈值（默认从config读取）
-        fix_size: 是否固定尺寸（默认从config读取）
-        output_dir: 输出目录（默认从config读取）
-        display: 是否显示图片（默认从config读取）
-    
-    Returns:
-        dict: 包含处理结果的字典，格式为 {'score': float, 'blurry': bool}
+        threshold: 模糊阈值
+        fix_size: 是否固定尺寸
+        output_dir: 输出目录
+        display: 是否显示图片
+        record: 是否保存输出
     """
     # 使用传入参数或从config读取默认值
     threshold = threshold if threshold is not None else THRESHOLD
@@ -284,8 +285,7 @@ def process_image(image_path, threshold=None, fix_size=None, output_dir=None, di
 
     logging.info(f'image_path: {image_path} score: {score:.1f} blurry: {blurry}')
 
-    # Save image with overlay
-    if output_dir:
+    if record and output_dir:
         img_dir = pathlib.Path(output_dir) / image_path.stem
         img_dir.mkdir(parents=True, exist_ok=True)
 
@@ -314,7 +314,7 @@ def process_media(inputs, **kwargs):
     
     Args:
         inputs: 输入路径（字符串、路径对象或列表）
-        **kwargs: 可选参数，会覆盖config中的默认值
+        **kwargs: 可选参数
             - threshold: 模糊阈值
             - fix_size: 是否固定尺寸
             - output_dir: 输出目录
@@ -326,13 +326,10 @@ def process_media(inputs, **kwargs):
             - valid_ratio_threshold: 有效率阈值
             - verbose: 是否显示详细日志
             - display: 是否显示图片
+            - record: 是否保存frame输出和JSON日志
             - img_extensions: 图片扩展名列表
             - video_extensions: 视频扩展名列表
-    
-    Returns:
-        list: 处理结果列表，每个元素是处理结果字典
     """
-    # 从kwargs中提取参数，如果没有则使用config默认值
     threshold = kwargs.get('threshold', THRESHOLD)
     fix_size = kwargs.get('fix_size', FIX_SIZE)
     output_dir = kwargs.get('output_dir', OUTPUT_DIR)
@@ -344,6 +341,7 @@ def process_media(inputs, **kwargs):
     valid_ratio_threshold = kwargs.get('valid_ratio_threshold', VALID_RATIO_THRESHOLD)
     verbose = kwargs.get('verbose', VERBOSE)
     display = kwargs.get('display', DISPLAY)
+    record = kwargs.get('record', False)
     img_extensions = kwargs.get('img_extensions', IMG_EXTENSIONS)
     video_extensions = kwargs.get('video_extensions', VIDEO_EXTENSIONS)
     
@@ -375,7 +373,8 @@ def process_media(inputs, **kwargs):
                 motion_method=motion_method,
                 motion_skip_frames=motion_skip_frames,
                 jitter_threshold=jitter_threshold,
-                valid_ratio_threshold=valid_ratio_threshold
+                valid_ratio_threshold=valid_ratio_threshold,
+                record=record
             )
 
             if video_result is None:
@@ -391,7 +390,8 @@ def process_media(inputs, **kwargs):
                 threshold=threshold,
                 fix_size=fix_size,
                 output_dir=output_dir,
-                display=display
+                display=display,
+                record=record
             )
             
             if image_result is not None:
@@ -402,11 +402,9 @@ def process_media(inputs, **kwargs):
 
 
 if __name__ == '__main__':
-    # 命令行接口（保留原有功能）
     assert sys.version_info >= (3, 6), sys.version_info
     args = parse_args()
 
-    # 使用命令行参数调用主函数
     results = process_media(
         args.inputs,
         threshold=args.threshold,
@@ -417,8 +415,8 @@ if __name__ == '__main__':
         motion_method=args.motion_method,
         motion_skip_frames=args.motion_skip_frames,
         verbose=args.verbose,
-        display=args.display
+        display=args.display,
+        record=args.record
     )
     
-    # 输出结果摘要
     logging.info(f'处理完成，共处理 {len(results)} 个文件')
