@@ -12,8 +12,7 @@ from tqdm import tqdm
 import matplotlib.pyplot as plt
 from matplotlib.gridspec import GridSpec
 
-from detection import estimate_blur
-
+from .detection import estimate_blur
 
 def create_jitter_analysis_plot(jitter_stats, dx_seq, dy_seq, theta_seq=None, exposure_scores=None,
                                video_name="Video", save_path=None):
@@ -182,12 +181,12 @@ def create_jitter_analysis_plot(jitter_stats, dx_seq, dy_seq, theta_seq=None, ex
         print(f"Error creating jitter analysis plot: {e}")
         import traceback
         traceback.print_exc()
-from detection import fix_image_size
-from detection import pretty_blur_map
-from detection import estimate_motion
-from detection import judge_exposure
-from detection import optical_flow_method
-from detection import calc_jitter
+from .detection import fix_image_size
+from .detection import pretty_blur_map
+from .detection import estimate_motion
+from .detection import judge_exposure
+from .detection import optical_flow_method
+from .detection import calc_jitter
 
 # Load configuration from config.yaml
 def load_config():
