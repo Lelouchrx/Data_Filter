@@ -1,0 +1,44 @@
+output_dir: 'frames_output'
+img_extensions: ['.jpg', '.png', '.jpeg']
+video_extensions: ['.mp4', '.avi', '.mov', '.mkv']
+
+# Blur detection parameters
+blur_thresh: 50.0
+fix_size: true
+target_size: [500, 500]
+blur_ratio: 0.3
+
+# Video processing parameters
+sample: 3.0
+motion: 'lk'
+
+# Jitter detection parameters
+hf_high: 35.0
+hf_low: 10.0
+hf_threshold: 40
+disp_px: 7.0
+disp_high: 0.10
+disp_low: 0.03
+scale: 0.5
+ransac_interval: 5
+
+# Exposure detection parameters
+exp_mean: 180
+exp_std: 60
+exp_ratio: 0.1
+
+# Feature detection parameters
+max_corner: 60
+quality: 0.02
+min_dist: 25
+block: 3
+
+# Detection feature switches
+blur_test: true
+jitter_test: true
+exposure_test: true
+
+# Logging and display
+verbose: false
+display: false
+jitter_plot: false
