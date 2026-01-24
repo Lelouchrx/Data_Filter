@@ -9,7 +9,7 @@ import uuid  # 新增：用于生成唯一文件名
 from datetime import datetime
 # internal imports
 from blur.process import process_media, load_config
-
+from data_filtering.video_benchmark import analyze_video  
 app = FastAPI(
     title="Media Process API",
     description="upload video files, run blur/jitter/exposure tests on media files via API",
@@ -51,7 +51,7 @@ async def process_files(files: List[UploadFile] = File(...)):
         config = load_config()
 
         # 调用原函数处理（固定参数和你原脚本保持一致）
-        results = process_media(
+        results1 = process_media(
             input_paths,
             threshold=config['blur_thresh'],
             fix_size=config['fix_size'],
@@ -67,14 +67,19 @@ async def process_files(files: List[UploadFile] = File(...)):
             enable_exposure_test=config['exposure_test'],
             show_jitter_plot=False
         )
-
+        results2 = benchmark_video(
+            input_paths,
+            output_dir=config['output_dir'],
+            verbose=config['verbose']
+        )
         # 返回结果时，顺便告诉客户端文件保存路径
         return JSONResponse(content={
             "status": "success",
-            "processed_count": len(results),
-            "results": results,
+            "processed_count": len(results1),
+            "results": results1,
+            "benchmark_results": results2,  
             "saved_files": input_paths,  # 新增：返回保存路径，方便你后续读取
-            "message": f"处理完成，共处理 {len(results)} 个文件，文件已保存到 {UPLOAD_DIR}"
+            "message": f"处理完成，共处理 {len(results1)} 个文件，文件已保存到 {UPLOAD_DIR}"
         })
 
     except Exception as e:

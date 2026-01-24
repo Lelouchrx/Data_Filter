@@ -1,5 +1,5 @@
 import requests
-
+import os
 # 服务端地址（替换成你的服务器内网IP）
 url = "http://192.168.x.x:8000/process"  # 示例：http://10.0.0.123:8000/process
 
