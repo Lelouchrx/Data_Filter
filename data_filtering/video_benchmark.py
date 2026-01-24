@@ -3,7 +3,7 @@ import yaml
 import time
 import os
 from tqdm import tqdm
-from hoi_system import HandObjectInteractionSystem  # 更新类名
+from .hoi_system import HandObjectInteractionSystem  # 更新类名
 
 # 配置
 VIDEO_PATH = "test_video.mp4"  # 你的视频路径
@@ -12,17 +12,29 @@ FRAME_STRIDE = 15
 # 如果视频是 60fps，意味着每秒只看 4 帧。
 # 对于判断“这视频能不能用”来说，每秒 4 帧的信息量绝对够了。
 
-def analyze_video(video_path):
+def analyze_video(video_path, hoi_sys=None):
     if not os.path.exists(video_path):
         print(f"❌ 找不到视频: {video_path}")
         return None
 
     print(f"🚀 启动基准测试 (Benchmarks): {video_path}")
     
-    # 初始化你的新引擎
-    hoi_sys = HandObjectInteractionSystem(model_size='yolov8s.pt')
+    # 增加判断逻辑：
+    # 如果外部传进来了模型，就直接用；
+    # 如果没传（比如你单独运行脚本测试时），才在内部加载。
+    if hoi_sys is None:
+        print("⚠️ 未检测到预加载模型，正在初始化新模型...")
+        hoi_sys = HandObjectInteractionSystem(model_size='yolov8s.pt')
+    else:
+        print("✅ 使用预加载的全局模型")
     
     cap = cv2.VideoCapture(video_path)
+    if not os.path.exists(video_path):
+        print(f"❌ 找不到视频: {video_path}")
+        return None
+
+    print(f"🚀 启动基准测试 (Benchmarks): {video_path}")
+    
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
     fps = cap.get(cv2.CAP_PROP_FPS)
     
@@ -89,7 +101,9 @@ def analyze_video(video_path):
     return result
 
 if __name__ == "__main__":
-    result_data = analyze_video(VIDEO_PATH)
+    hoi_sys = None  # 全局变量，存放预加载模型
+    print("⚡️ 正在加载 YOLO 模型... ")
+    result_data = analyze_video(VIDEO_PATH, hoi_sys=hoi_sys)
     
     if result_data:
         # 打印到控制台

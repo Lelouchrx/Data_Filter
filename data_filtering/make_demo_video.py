@@ -2,7 +2,7 @@ import cv2
 import os
 import time
 from tqdm import tqdm
-from hoi_system import HandObjectInteractionSystem
+from .hoi_system import HandObjectInteractionSystem
 
 # =================配置区域=================
 INPUT_VIDEO = "test_video.mp4"       # 输入视频

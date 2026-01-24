@@ -1,0 +1,22 @@
+{
+    "filename": "Screen Recording 2026-01-24 at 11.31.23.mov",
+    "pipeline_status": "ACCEPTED",
+    "reject_reason": null,
+    "quality_data": {
+        "passed": true,
+        "blur_score": 214.17269204272796,
+        "blur_ratio": 0.0,
+        "jitter_disp_pct": 0.0,
+        "jitter_hf_energy": 0.0,
+        "is_shake": false,
+        "exposure_ratio": 0.0,
+        "max_consecutive_bad_exp": 0
+    },
+    "content_data": {
+        "passed": true,
+        "interaction_ratio": 1.0,
+        "missing_hand_ratio": 0.0,
+        "processing_time": 2.94
+    },
+    "processed_at": "2026-01-24T13:31:23.073073"
+}
