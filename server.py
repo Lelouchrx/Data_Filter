@@ -29,14 +29,14 @@ for d in DIRS.values():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     global GLOBAL_HOI_SYS
-    print("🚀 [Server] 正在初始化模型 (YOLO + Depth)...")
+    print("🚀 [Server] loading (YOLO + Depth)...")
     try:
         GLOBAL_HOI_SYS = HandObjectInteractionSystem(model_size='yolov8s.pt')
-        print("✅ [Server] 模型加载完成。")
+        print("✅ [Server] model loaded successfully.")
     except Exception as e:
-        print(f"❌ [Server] 模型加载失败: {e}")
+        print(f"❌ [Server] model loading failed: {e}")
     yield
-    print("🛑 [Server] 服务关闭。")
+    print("🛑 [Server] server shutdown.")
 
 app = FastAPI(lifespan=lifespan)
 
@@ -46,7 +46,7 @@ def save_log(data, filename):
     data["processed_at"] = datetime.now().isoformat()
     with open(log_path, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
-    print(f"📝 [Log] 结果日志已保存: {json_name}")
+    print(f"📝 [Log] log saved: {json_name}")
 
 @app.post("/analyze")
 async def analyze_video_endpoint(file: UploadFile = File(...)):
@@ -67,7 +67,7 @@ async def analyze_video_endpoint(file: UploadFile = File(...)):
             shutil.copyfileobj(file.file, buffer)
         
         # 2. 质量检测
-        print(f"🔍 [Step 1] 运行质量检测...")
+        print(f"🔍 [Step 1] running quality check...")
         quality_results_list = process_media(
             inputs=[temp_file_path],
             threshold=100.0,
@@ -98,10 +98,10 @@ async def analyze_video_endpoint(file: UploadFile = File(...)):
         if not q_res['keep']:
             final_response["pipeline_status"] = "REJECTED_QUALITY"
             final_response["reject_reason"] = "Video quality too low"
-            print(f"❌ [Result] 质量检测未通过")
+            print(f"❌ [Result] quality check failed")
         else:
             # 3. 内容检测
-            print(f"🧠 [Step 2] 运行内容分析...")
+            print(f"🧠 [Step 2] running content analysis...")
             content_res = analyze_video(temp_file_path, hoi_sys=GLOBAL_HOI_SYS)
             
             if content_res:
@@ -114,11 +114,11 @@ async def analyze_video_endpoint(file: UploadFile = File(...)):
 
                 if content_res['keep']:
                     final_response["pipeline_status"] = "ACCEPTED"
-                    print(f"✅ [Result] 完美通过！")
+                    print(f"✅ [Result] passed all checks")
                 else:
                     final_response["pipeline_status"] = "REJECTED_CONTENT"
                     final_response["reject_reason"] = "No valid interaction"
-                    print(f"⚠️ [Result] 内容不符")
+                    print(f"⚠️ [Result] content mismatch")
             else:
                 final_response["pipeline_status"] = "ERROR_CONTENT"
                 final_response["reject_reason"] = "Content analysis failed"
@@ -150,9 +150,9 @@ async def analyze_video_endpoint(file: UploadFile = File(...)):
                 if os.path.exists(dest_path):
                     os.remove(dest_path)
                 shutil.move(temp_file_path, dest_path)
-                print(f"{icon} [Storage] 视频已移动至: {dest_path}")
+                print(f"{icon} [Storage] video moved to: {dest_path}")
             except Exception as e:
-                print(f"❌ 移动文件失败: {e}")
+                print(f"❌ failed to move file: {e}")
 
     return final_response
 
