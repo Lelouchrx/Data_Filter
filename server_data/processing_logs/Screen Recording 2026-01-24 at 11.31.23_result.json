@@ -14,9 +14,9 @@
     },
     "content_data": {
         "passed": true,
-        "interaction_ratio": 1.0,
+        "interaction_ratio": 0.9706,
         "missing_hand_ratio": 0.0,
-        "processing_time": 2.94
+        "processing_time": 5.2
     },
-    "processed_at": "2026-01-24T13:31:23.073073"
+    "processed_at": "2026-01-27T18:06:51.445328"
 }

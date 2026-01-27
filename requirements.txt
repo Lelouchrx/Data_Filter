@@ -1,0 +1,21 @@
+matplotlib>=3.3.0
+PyYAML>=5.3.0
+uvicorn
+requests
+fastapi
+python-multipart
+torch>=2.0.0
+torchvision>=0.15.0
+
+ultralytics       # YOLOv8
+mediapipe=0.10.9         # 手部检测
+opencv-python     # cv2
+pillow            # 图像处理
+
+transformers
+huggingface-hub
+
+numpy
+tqdm              # 进度条
+pyyaml            # 配置文件读取
+scipy             # 科学计算

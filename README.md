@@ -66,7 +66,7 @@ The client uploads videos and displays real-time analysis results.
 
 ```bash
 python client.py /path/to/video.mp4
-
+python client.py "client files"
 ```
 
 **Option B: Batch Process a Folder (Recommended)**
