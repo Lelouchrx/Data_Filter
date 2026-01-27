@@ -1,3 +1,17 @@
+server :
+conda activate filter
+python server.py
+or
+nohup python server.py > server.log 2>&1 &
+outputs: server_data
+
+client:
+inputs:client_files
+python client.py "client files"
+or
+python client.py /path/to/video.mp4
+output:Data_Filter/client_logs
+
 # Automated Video Quality & Content Filtering System
 
 This project is a client-server based pipeline designed to automatically filter video datasets for robotics learning or computer vision tasks. It utilizes a two-stage screening process to filter out low-quality videos (blur, shake, bad exposure) and videos lacking specific content (hand-object interaction).
