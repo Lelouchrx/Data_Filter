@@ -52,7 +52,7 @@ The server handles model loading, inference, and file management.
 
 ```bash
 python server.py
-
+nohup python server.py > server.log 2>&1 &
 ```
 
 * **Startup**: Wait until you see `✅ [Server] model loaded successfully` (Model loaded) and `Uvicorn running on http://0.0.0.0:8000`.

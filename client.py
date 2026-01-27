@@ -6,7 +6,7 @@ from datetime import datetime
 
 # === Configuration ===
 # SERVER_URL = "http://localhost:8000/analyze"# local server URL
-SERVER_URL = "http://123.45.67.89:8000/analyze" # remote server URL
+SERVER_URL = "http://43.134.161.5:8000/analyze" # remote server URL
 VIDEO_EXTS = ('.mp4', '.mov', '.avi', '.mkv', '.webm') 
 
 def upload_video(file_path, current_idx=1, total_count=1):
