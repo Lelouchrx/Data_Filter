@@ -2,15 +2,32 @@ import requests
 import os
 import sys
 import time
+import json
 from datetime import datetime
 
 # === Configuration ===
 # SERVER_URL = "http://localhost:8000/analyze"# local server URL
 SERVER_URL = "http://43.134.161.5:8000/analyze" # remote server URL
 VIDEO_EXTS = ('.mp4', '.mov', '.avi', '.mkv', '.webm') 
+LOG_DIR = "client_logs"  # 客户端日志存放目录
+
+# 自动创建日志目录
+os.makedirs(LOG_DIR, exist_ok=True)
+
+def save_local_log(data, original_filename):
+    """Save the JSON result locally on the client side."""
+    try:
+        json_name = f"{os.path.splitext(original_filename)[0]}_result.json"
+        log_path = os.path.join(LOG_DIR, json_name)
+        
+        with open(log_path, 'w', encoding='utf-8') as f:
+            json.dump(data, f, ensure_ascii=False, indent=4)
+        print(f"📝 Log saved: {log_path}")
+    except Exception as e:
+        print(f"❌ Failed to save local log: {e}")
 
 def upload_video(file_path, current_idx=1, total_count=1):
-    """Upload a single video, print result, and return status."""
+    """Upload a single video, save log, print result, and return status."""
     if not os.path.exists(file_path):
         print(f"❌ File not found: {file_path}")
         return "ERROR"
@@ -27,6 +44,10 @@ def upload_video(file_path, current_idx=1, total_count=1):
 
         if resp.status_code == 200:
             data = resp.json()
+            
+            # === Save local log ===
+            save_local_log(data, filename)
+            
             print_report(data)
             return data.get('pipeline_status', 'UNKNOWN')
         else:
@@ -34,7 +55,7 @@ def upload_video(file_path, current_idx=1, total_count=1):
             return "SERVER_ERROR"
 
     except requests.exceptions.ConnectionError:
-        print("❌ Connection Refused: Is the server running?")
+        print("❌ Connection Refused: Is the server running? Check IP and Firewall.")
         return "CONNECTION_ERROR"
     except Exception as e:
         print(f"❌ Unknown Error: {e}")
@@ -58,8 +79,7 @@ def print_report(data):
     
     print("-" * 50)
     print(f"🏁 Final Status: {icon} {status}")
-    
-    # 1. Quality Report
+        
     q = data.get('quality_data')
     if q:
         pass_str = "PASS" if q.get('passed') else "FAIL"
@@ -153,6 +173,7 @@ def main():
     if stats['ERRORS'] > 0:
         print(f"❌ Errors:           {stats['ERRORS']}")
     print("="*40)
+    print(f"📁 Logs saved to: {os.path.abspath(LOG_DIR)}")
 
 if __name__ == "__main__":
     main()
